@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scoop Dreams | Premium Ice Cream</title>
+    <style>
+        /* --- CSS VARIABLES & RESET --- */
+        :root {
+            --primary-pink: #ffb7b2;
+            --primary-dark: #ff9e99;
+            --accent-mint: #b5ead7;
+            --accent-blue: #c7ceea;
+            --text-chocolate: #4a3b32;
+            --bg-cream: #fffdf9;
+            --white: #ffffff;
+            --shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-chocolate);
+            background-color: var(--bg-cream);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* --- HEADER & NAVIGATION --- */
+        header {
+            background-color: var(--white);
+            border-bottom: 3px solid var(--primary-pink);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            font-size: 1.8rem;
+            color: var(--primary-dark);
+            text-decoration: none;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-chocolate);
+            font-weight: 600;
+            font-size: 0.9rem;
+            padding: 5px 10px;
+            border-radius: 20px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        nav a:hover, nav a.active {
+            background-color: var(--primary-pink);
+            color: var(--white);
+        }
+
+        /* --- PAGE DISPLAY LOGIC --- */
+        .page-section {
+            display: none; /* Hidden by default */
+            padding: 3rem 0;
+            animation: fadeIn 0.5s ease;
+            flex: 1;
+        }
+
+        .page-section.active {
+            display: block; /* Show active page */
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- COMMON STYLES --- */
+        h1, h2 {
+            color: var(--primary-dark);
+            margin-bottom: 1.5rem;
+        }
+        
+        h1 { font-size: 2.5rem; text-align: center; }
+        h2 { font-size: 2rem; border-bottom: 2px solid var(--accent-mint); display: inline-block; }
+
+        p { margin-bottom: 1rem; font-size: 1.1rem; }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--text-chocolate);
+            color: var(--white);
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: bold;
+            transition: transform 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-dark);
+            transform: scale(1.05);
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* --- PAGE 1: HOME --- */
+        #home {
+            text-align: center;
+            background: linear-gradient(rgba(255,255,255,0.8), rgba(255,255,255,0.8)), url('https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?w=1200') center/cover;
+            padding: 5rem 0;
+            display: flex; /* Override for JS logic */
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        #home.active { display: flex; } /* Maintain flex for active state */
+        #home h1 { font-size: 3.5rem; text-shadow: 2px 2px 0px #fff; }
+
+        /* --- PAGE 2: FLAVORS --- */
+        .flavor-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        .price-tag {
+            color: var(--primary-dark);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        /* --- PAGE 3: SUNDAES --- */
+        .sundaes-banner {
+            background: var(--accent-mint);
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        /* --- PAGE 4: ABOUT --- */
+        .about-split {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .about-img {
+            flex: 1;
+            min-width: 300px;
+            height: 300px;
+            background: url('https://images.unsplash.com/photo-1550966871-3ed3c47e2ce2?w=600') center/cover;
+            border-radius: 15px;
+        }
+        .about-text { flex: 1; }
+
+        /* --- PAGE 5: LOCATIONS --- */
+        .location-item {
+            border-left: 5px solid var(--primary-pink);
+            padding-left: 15px;
+            margin-bottom: 20px;
+            background: #fff;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            border-radius: 0 10px 10px 0;
+        }
+
+        /* --- PAGE 6: FRANCHISE --- */
+        .franchise-features {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+        }
+        .feature-box {
+            text-align: center;
+            max-width: 300px;
+            margin: 10px;
+        }
+        .feature-icon { font-size: 2rem; margin-bottom: 10px; display: block; }
+
+        /* --- PAGE 7: CATERING --- */
+        .catering-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fff;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-radius: 10px;
+            border: 1px solid #eee;
+        }
+
+        /* --- PAGE 8: NUTRITION --- */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+            margin-top: 1rem;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        th { background-color: var(--primary-pink); color: #fff; }
+
+        /* --- PAGE 9: CAREERS --- */
+        .job-posting {
+            background: #fff;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+        .job-title { color: var(--primary-dark); font-weight: bold; }
+
+        /* --- PAGE 10: CONTACT --- */
+        form {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+            box-shadow: var(--shadow);
+        }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-family: inherit;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            background-color: var(--text-chocolate);
+            color: var(--primary-pink);
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: auto;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            .nav-container { flex-direction: column; gap: 1rem; }
+            nav ul { justify-content: center; }
+            nav a { font-size: 0.8rem; }
+            #home h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container nav-container">
+            <a href="#" onclick="showPage('home')" class="logo">Scoop Dreams 🍦</a>
+            <nav>
+                <ul>
+                    <li><a onclick="showPage('home')" class="nav-link active">Home</a></li>
+                    <li><a onclick="showPage('flavors')" class="nav-link">Flavors</a></li>
+                    <li><a onclick="showPage('sundaes')" class="nav-link">Sundaes</a></li>
+                    <li><a onclick="showPage('about')" class="nav-link">About</a></li>
+                    <li><a onclick="showPage('locations')" class="nav-link">Locations</a></li>
+                    <li><a onclick="showPage('franchise')" class="nav-link">Franchise</a></li>
+                    <li><a onclick="showPage('catering')" class="nav-link">Catering</a></li>
+                    <li><a onclick="showPage('nutrition')" class="nav-link">Nutrition</a></li>
+                    <li><a onclick="showPage('careers')" class="nav-link">Careers</a></li>
+                    <li><a onclick="showPage('contact')" class="nav-link">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <!-- PAGE 1: HOME -->
+        <section id="home" class="page-section active">
+            <h1>Life is Better with Ice Cream</h1>
+            <p>Hand-churned, locally sourced, and made with love every single morning.</p>
+            <br>
+            <button onclick="showPage('flavors')" class="btn">Explore Flavors</button>
+        </section>
+
+        <!-- PAGE 2: FLAVORS -->
+        <section id="flavors" class="page-section">
+            <div style="text-align:center">
+                <h2>Our Daily Flavors</h2>
+                <p>Rotating specials available in-store every day!</p>
+            </div>
+            <div class="card-grid">
+                <div class="card flavor-card">
+                    <img src="https://images.unsplash.com/photo-1576504677634-64a93f32958c?w=400" alt="Vanilla">
+                    <h3>Madagascar Vanilla</h3>
+                    <p>Classic, rich, and creamy.</p>
+                    <span class="price-tag">\$4.50 / Scoop</span>
+                </div>
+                <div class="card flavor-card">
+                    <img src="https://images.unsplash.com/photo-1061587671565-122fd9d7d428?w=400" alt="Chocolate">
+                    <h3>Belgian Chocolate</h3>
+                    <p>Dark cocoa chunks in fudge base.</p>
+                    <span class="price-tag">\$4.75 / Scoop</span>
+                </div>
+                <div class="card flavor-card">
+                    <img src="https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400" alt="Strawberry">
+                    <h3>Strawberry Fields</h3>
+                    <p>Real strawberry swirled in.</p>
+                    <span class="price-tag">\$4.50 / Scoop</span>
+                </div>
+                <div class="card flavor-card">
+                    <img src="https://images.unsplash.com/photo-1501443762994-82bd5dace89a?w=400" alt="Mint">
+                    <h3>Mint Chip</h3>
+                    <p>Fresh mint with dark chips.</p>
+                    <span class="price-tag">\$4.50 / Scoop</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE 3: SUNDAES -->
+        <section id="sundaes" class="page-section">
+            <h2>Sundaes & Creations</h2>
+            <div class="sundaes-banner">
+                <h3>Build Your Own Masterpiece</h3>
+                <p>Start with a base, add toppings, and drizzle with sauce.</p>
+            </div>
+            <div class="card-grid">
+                <div class="card">
+                    <h3>The Classic Hot Fudge</h3>
+                    <p>3 scoops of vanilla, hot fudge, whipped cream, nuts, cherry.</p>
+                    <span class="price-tag">\$8.50</span>
+                </div>
+                <div class="card">
+                    <h3>Strawberry Shortcake</h3>
+                    <p>Strawberry ice cream, crumbled cake, fresh strawberries, cream.</p>
+                    <span class="price-tag">\$9.00</span>
+                </div>
+                <div class="card">
+                    <h3>Brownie Bliss</h3>
+                    <p>Chocolate ice cream, warm brownie chunks, caramel sauce.</p>
+                    <span class="price-tag">\$9.50</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE 4: ABOUT -->
+        <section id="about" class="page-section">
+            <h2>Our Story</h2>
+            <div class="about-split">
+                <div class="about-img"></div>
+                <div class="about-text">
+                    <p>Scoop Dreams began in 2015 in a small garage with just one churn. Our mission has always been simple: bring a smile to people's faces, one scoop at a time.</p>
+                    <p>We partner with local dairy farms to get the freshest milk and cream. Our fruits are sourced from regional farmers' markets, ensuring that every bite tastes like summer.</p>
+                    <p>We are committed to sustainability, using biodegradable cups and spoons.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE 5: LOCATIONS -->
+        <section id="locations" class="page-section">
+            <h2>Find a Shop</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                <div class="location-item">
+                    <h3>Downtown Parlor</h3>
+                    <p>123 Main Street</p>
+                    <p>Open: 11am - 10pm</p>
+                </div>
+                <div class="location-item">
+                    <h3>Beach Boardwalk</h3>
+                    <p>456 Ocean Drive</p>
+                    <p>Open: 10am - 11pm</p>
+                </div>
+                <div class="location-item">
+                    <h3>Mall Kiosk</h3>
+                    <p>789 Westside Mall</p>
+                    <p>Open: 10am - 9pm</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE 6: FRANCHISE -->
+        <section id="franchise" class="page-section">
+            <div style="text-align:center">
+                <h2>Join the Family</h2>
+                <p>Own a Scoop Dreams franchise and bring happiness to your neighborhood.</p>
+            </div>
+            <div class="franchise-features">
+                <div class="feature-box">
+                    <span class="feature-icon">🎓</span>
+                    <h3>Training</h3>
+                    <p>2 weeks intensive training at HQ.</p>
+                </div>
+                <div class="feature-box">
+                    <span class="feature-icon">📦</span>
+                    <h3>Supply Chain</h3>
+                    <p>Access to our exclusive ingredient list.</p>
+                </div>
+                <div class="feature-box">
+                    <span class="feature-icon">📈</span>
+                    <h3>Marketing</h3>
+                    <p>National and local marketing support.</p>
+                </div>
+            </div>
+            <div style="text-align:center">
+                <button class="btn">Request Franchise Info</button>
+            </div>
+        </section>
+
+        <!-- PAGE 7: CATERING -->
+        <section id="catering" class="page-section">
+            <h2>Event Catering</h2>
+            <p>Make your wedding, birthday, or corporate event unforgettable with an ice cream bar.</p>
+            <br>
+            <div class="catering-option">
+                <div>
+                    <h3>Sundae Bar Station</h3>
+                    <p>Server included, 3 flavors, 5 toppings.</p>
+                </div>
+                <div style="font-weight:bold; font-size:1.5rem">\$250</div>
+            </div>
+            <div class="catering-option">
+                <div>
+                    <h3>Ice Cream Cart Rental</h3>
+                    <p>Vintage cart rental, 2 tubs of choice.</p>
+                </div>
+                <div style="font-weight:bold; font-size:1.5rem">\$300</div>
+            </div>
+            <div class="catering-option">
+                <div>
+                    <h3>Bulk To-Go</h3>
+                    <p>5 Gallon Tubs (any flavor).</p>
+                </div>
+                <div style="font-weight:bold; font-size:1.5rem">\$45</div>
+            </div>
+        </section>
+
+        <!-- PAGE 8: NUTRITION -->
+        <section id="nutrition" class="page-section">
+            <h2>Nutritional Information</h2>
+            <p>We believe in transparency. Here are the facts for our standard servings.</p>
+            <div style="overflow-x:auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Flavor</th>
+                            <th>Serving Size</th>
+                            <th>Calories</th>
+                            <th>Sugar (g)</th>
+                            <th>Allergens</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Vanilla</td>
+                            <td>1/2 Cup</td>
+                            <td>180</td>
+                            <td>14</td>
+                            <td>Milk</td>
+                        </tr>
+                        <tr>
+                            <td>Chocolate</td>
+                            <td>1/2 Cup</td>
+                            <td>210</td>
+                            <td>18</td>
+                            <td>Milk, Soy</td>
+                        </tr>
+                        <tr>
+                            <td>Mint Chip</td>
+                            <td>1/2 Cup</td>
+                            <td>190</td>
+                            <td>16</td>
+                            <td>Milk, Soy</td>
+                        </tr>
+                        <tr>
+                            <td>Sorbet (Lemon)</td>
+                            <td>1/2 Cup</td>
+                            <td>120</td>
+                            <td>24</td>
+                            <td>None</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- PAGE 9: CAREERS -->
+        <section id="careers" class="page-section">
+            <h2>Careers & Opportunities</h2>
+            <p>We are always looking for enthusiastic people to join our team!</p>
+            <br>
+            <div class="job-posting">
+                <div class="job-title">Scoopervisor (Shift Lead)</div>
+                <p>Full-time • \$15/hr • Downtown Location</p>
+                <p>Experience in food service required. Must be 18+.</p>
+                <button class="btn" style="font-size:0.8rem">Apply Now</button>
+            </div>
+            <div class="job-posting">
+                <div class="job-title">Cone Artist (Server)</div>
+                <p>Part-time • \$12/hr • All Locations</p>
+                <p>Great first job! Must have a friendly smile.</p>
+                <button class="btn" style="font-size:0.8rem">Apply Now</button>
+            </div>
+            <div class="job-posting">
+                <div class="job-title">Ice Cream Maker (Production)</div>
+                <p>Full-time • \$18/hr • Main Kitchen</p>
+                <p>Early morning shifts. Lifting required.</p>
+                <button class="btn" style="font-size:0.8rem">Apply Now</button>
+            </div>
+        </section>
+
+        <!-- PAGE 10: CONTACT -->
+        <section id="contact" class="page-section">
+            <h2>Contact Us</h2>
+            <div style="text-align:center; margin-bottom:2rem;">
+                <p>Have a question or feedback? Drop us a line!</p>
+            </div>
+            <form onsubmit="event.preventDefault(); alert('Thanks for contacting Scoop Dreams! We will reply shortly.');">
+                <div class="form-group">
+                    <label>Your Name</label>
+                    <input type="text" required placeholder="John Doe">
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" required placeholder="john@example.com">
+                </div>
+                <div class="form-group">
+                    <label>Subject</label>
+                    <select style="width:100%; padding:10px; border:1px solid #ccc; border-radius:5px;">
+                        <option>General Inquiry</option>
+                        <option>Catering Quote</option>
+                        <option>Feedback</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Message</label>
+                    <textarea rows="5" required placeholder="How can we help?"></textarea>
+                </div>
+                <button type="submit" class="btn" style="width:100%">Send Message</button>
+            </form>
+        </section>
+
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Scoop Dreams Ice Cream. All rights reserved.</p>
+            <p style="font-size: 0.8rem; color: #aaa;">Made with sugar and spice.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Navigation Function
+        function showPage(pageId) {
+            // Hide all page sections
+            const sections = document.querySelectorAll('.page-section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Remove active class from all nav links
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+            });
+
+            // Show the requested section
+            document.getElementById(pageId).classList.add('active');
+
+            // Highlight the correct nav link
+            const activeLink = document.querySelector(`.nav-link[onclick="showPage('${pageId}')"]`);
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
+
+            // Scroll to top of page
+            window.scrollTo(0, 0);
+        }
+    </script>
+</body>
+</html>
